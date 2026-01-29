@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bear.saving | 自由職業者緩衝池系統</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #FFF9E3; color: #5F4B32; }
+        .cream-card { background-color: #FFFFFF; border-radius: 2.5rem; box-shadow: 0 20px 50px rgba(217, 176, 120, 0.1); }
+        .water-wave {
+            transition: height 1s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(180deg, #FFD966 0%, #F4B400 100%);
+            position: relative;
+        }
+        input:focus { background-color: #FFFFFF; border: 2px solid #F4B400; outline: none; }
+        .input-label { font-size: 10px; font-weight: 900; color: #A67C52; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; display: block; }
+        .protocol-box { background-color: #FDFBF0; border-radius: 1rem; padding: 1rem; border: 1px solid #F3E5AB; }
+        .result-highlight { background-color: #FFFDF5; border: 1px dashed #F4B400; border-radius: 12px; padding: 12px; }
+    </style>
+</head>
+<body class="min-h-screen py-10 px-4 md:px-10 flex flex-col items-center">
+
+    <div class="max-w-6xl w-full cream-card overflow-hidden border border-[#F3E5AB] flex flex-col md:flex-row">
+        
+        <div class="md:w-1/2 p-8 md:p-10 border-b md:border-b-0 md:border-r border-[#F3E5AB] space-y-6">
+            <header>
+                <h1 class="text-3xl font-black mb-1 text-[#5F4B32]">Bear.saving <span class="text-[#F4B400]">v2.7</span></h1>
+                <p class="text-[#A67C52] text-xs font-bold tracking-widest uppercase">Cash Flow Management System</p>
+            </header>
+
+            <section class="space-y-3">
+                <h3 class="font-bold text-[#8B5E3C] flex items-center text-sm">
+                    <span class="w-5 h-5 bg-[#F4B400] text-white rounded-full flex items-center justify-center mr-2 text-[10px]">1</span>
+                    本月收入淨化 (Net Income)
+                </h3>
+                <div class="grid grid-cols-1 gap-3">
+                    <div>
+                        <label class="input-label ml-1">本月進帳金額 (Gross Income)</label>
+                        <input type="number" id="grossIncome" placeholder="NT$ 0" class="w-full bg-[#FDFBF0] rounded-xl p-3 border-2 border-transparent shadow-sm">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="input-label ml-1">經營成本 (Cost)</label>
+                            <input type="number" id="businessCost" placeholder="NT$ 0" class="w-full bg-[#FDFBF0] rounded-xl p-3 border-2 border-transparent shadow-sm">
+                        </div>
+                        <div>
+                            <label class="input-label ml-1">預留稅率 (%)</label>
+                            <input type="number" id="taxRate" value="15" class="w-full bg-[#FDFBF0] rounded-xl p-3 border-2 border-transparent shadow-sm text-center font-bold">
+                        </div>
+                    </div>
+                    <div class="result-highlight flex justify-between items-center">
+                        <span class="text-xs font-bold text-[#A67C52]">計算結果：本月淨收入</span>
+                        <span id="netResult" class="text-lg font-black text-[#F4B400]">NT$ 0</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="space-y-3">
+                <h3 class="font-bold text-[#8B5E3C] flex items-center text-sm">
+                    <span class="w-5 h-5 bg-[#F4B400] text-white rounded-full flex items-center justify-center mr-2 text-[10px]">2</span>
+                    水位防護標準與入池計算
+                </h3>
+                <div class="relative">
+                    <label class="input-label ml-1">我的每月生活費 <span class="lowercase text-[9px] font-normal opacity-70">(固定+變動支出)</span></label>
+                    <input type="number" id="monthlyExpense" value="45000" class="w-full bg-[#FDFBF0] rounded-xl p-3 border-2 border-transparent shadow-sm text-lg font-bold">
+                </div>
+
+                <div class="result-highlight flex justify-between items-center bg-[#F0F9FF] border-[#3B82F6]/30">
+                    <span class="text-xs font-bold text-[#3B82F6]">本月可存入蓄水池金額</span>
+                    <span id="toPoolAmount" class="text-lg font-black text-[#3B82F6]">NT$ 0</span>
+                </div>
+                
+                <div class="protocol-box text-[11px] leading-relaxed">
+                    <p class="mb-1"><span class="text-red-500 font-bold">LV 1 (3M) - NT$ <span id="lv1Target">--</span>：</span>生存警戒。僅撥發「最低生活支出」。</p>
+                    <p class="mb-1"><span class="text-emerald-600 font-bold">LV 2 (6M) - NT$ <span id="lv2Target">--</span>：</span>安全平衡。正常撥發「固定薪資」。</p>
+                    <p><span class="text-blue-500 font-bold">LV 3 (12M) - NT$ <span id="lv3Target">--</span>：</span>自由溢流。獲得「拒絕權」。</p>
+                </div>
+            </section>
+        </div>
+
+        <div class="md:w-1/2 p-8 md:p-12 bg-[#FFFEFA] flex flex-col justify-center">
+            <div class="max-w-sm mx-auto w-full space-y-8">
+                <div class="flex items-center space-x-8">
+                    <div class="w-20 h-40 bg-[#FDFBF0] rounded-full border-4 border-[#F3E5AB] overflow-hidden relative shadow-inner">
+                        <div id="waterLevel" class="water-wave absolute bottom-0 w-full" style="height: 0%;"></div>
+                    </div>
+                    <div>
+                        <p id="monthsText" class="text-6xl font-black text-[#5F4B32]">0.0</p>
+                        <p class="text-[#A67C52] text-[10px] font-bold tracking-widest uppercase">Months Capacity</p>
+                        <div id="statusBadge" class="mt-2 inline-block px-3 py-0.5 rounded-full text-[10px] font-black bg-[#F3E5AB] text-[#8B5E3C]">Status Check</div>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="input-label ml-1">目前緩衝池總額 (蓄水池現況)</label>
+                        <input type="number" id="currentPool" value="150000" class="w-full bg-[#FDFBF0] rounded-2xl p-4 text-xl font-bold border-2 border-transparent shadow-sm">
+                    </div>
+                    <div class="bg-[#FFF9E3] p-5 rounded-2xl border border-[#F3E5AB] min-h-[80px] flex items-center">
+                        <p id="actionGuide" class="text-sm leading-relaxed font-medium">請輸入數據...</p>
+                    </div>
+                </div>
+
+                <div class="protocol-box border-dashed text-[10px] space-y-1 opacity-80">
+                    <p class="font-bold text-[#8B5E3C]">3. 控制閥門 (The Valve)</p>
+                    <p>每月 1 號自動撥薪，模擬領薪體感，消除不安全感。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ids = ['grossIncome', 'businessCost', 'taxRate', 'monthlyExpense', 'currentPool'];
+        ids.forEach(id => document.getElementById(id).addEventListener('input', calculate));
+
+        function calculate() {
+            const gross = parseFloat(document.getElementById('grossIncome').value) || 0;
+            const cost = parseFloat(document.getElementById('businessCost').value) || 0;
+            const taxRate = (parseFloat(document.getElementById('taxRate').value) || 0) / 100;
+            const expense = parseFloat(document.getElementById('monthlyExpense').value) || 0;
+            const pool = parseFloat(document.getElementById('currentPool').value) || 0;
+
+            // 1. 本月淨收入計算
+            const tax = Math.round((gross - cost) * taxRate);
+            const net = Math.max(0, (gross - cost - tax));
+            document.getElementById('netResult').innerText = `NT$ ${net.toLocaleString()}`;
+
+            // 2. 本月可存入金額 (淨收入 - 生活費)
+            const toPool = net - expense;
+            const toPoolEl = document.getElementById('toPoolAmount');
+            toPoolEl.innerText = `NT$ ${toPool.toLocaleString()}`;
+            toPoolEl.style.color = toPool >= 0 ? '#3B82F6' : '#EF4444'; // 負數變紅
+
+            // 3. 水位門檻
+            const lv1 = expense * 3;
+            const lv2 = expense * 6;
+            const lv3 = expense * 12;
+            document.getElementById('lv1Target').innerText = lv1.toLocaleString();
+            document.getElementById('lv2Target').innerText = lv2.toLocaleString();
+            document.getElementById('lv3Target').innerText = lv3.toLocaleString();
+
+            // 4. 診斷
+            const months = expense > 0 ? (pool / expense).toFixed(1) : 0;
+            document.getElementById('monthsText').innerText = months;
+            const percent = Math.min((months / 12) * 100, 100);
+            document.getElementById('waterLevel').style.height = `${percent}%`;
+
+            const badge = document.getElementById('statusBadge');
+            const guide = document.getElementById('actionGuide');
+
+            if (months < 3) {
+                badge.innerText = "LV 1: WARNING"; badge.className = "mt-2 inline-block px-3 py-0.5 rounded-full text-[10px] font-black bg-red-100 text-red-600";
+                guide.innerHTML = "🚨 水位不足 3 個月。建議縮減開支，優先補足緩衝池。";
+            } else if (months < 12) {
+                badge.innerText = "LV 2: STABLE"; badge.className = "mt-2 inline-block px-3 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-600";
+                guide.innerHTML = "✅ 水位健康。請維持固定領薪，讓大腦回歸創作。";
+            } else {
+                badge.innerText = "LV 3: FREEDOM"; badge.className = "mt-2 inline-block px-3 py-0.5 rounded-full text-[10px] font-black bg-blue-100 text-blue-600";
+                guide.innerHTML = "🚀 自由溢流！已獲得拒絕權，超出部分可啟動自我投資。";
+            }
+        }
+        calculate();
+    </script>
+</body>
+</html>
