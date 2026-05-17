@@ -1,4 +1,4 @@
-# Bear.saving | 自由職業者 / 固定收入緩衝池系統 v3.0
+# Bear.saving | 自由職業者 / 固定收入蓄水池系統 v3.0
 
 ```html
 <!DOCTYPE html>
@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bear.saving | 緩衝池系統</title>
+    <title>Bear.saving | 蓄水池系統</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
 
@@ -147,7 +147,7 @@
             </div>
         </section>
 
-        <!-- 緩衝池 -->
+        <!-- 蓄水池 -->
         <section class="space-y-3">
             <h3 class="font-bold text-[#8B5E3C] flex items-center text-sm">
                 <span class="w-5 h-5 bg-[#F4B400] text-white rounded-full flex items-center justify-center mr-2 text-[10px]">2</span>
@@ -163,7 +163,7 @@
             </div>
 
             <div class="result-highlight flex justify-between items-center bg-[#F0F9FF] border-[#3B82F6]/30">
-                <span class="text-xs font-bold text-[#3B82F6]">本月可存入緩衝池</span>
+                <span class="text-xs font-bold text-[#3B82F6]">本月可存入蓄水池</span>
                 <span id="toPoolAmount" class="text-lg font-black text-[#3B82F6]">NT$ 0</span>
             </div>
 
@@ -197,7 +197,7 @@
 
             <div class="space-y-4">
                 <div>
-                    <label class="input-label ml-1">目前緩衝池總額</label>
+                    <label class="input-label ml-1">目前蓄水池總額</label>
                     <input type="number" id="currentPool" value="150000"
                            class="w-full bg-[#FDFBF0] rounded-2xl p-4 text-xl font-bold border-2 border-transparent shadow-sm">
                 </div>
@@ -270,7 +270,7 @@
 
         document.getElementById('netResult').innerText = `NT$ ${net.toLocaleString()}`;
 
-        // 可存入緩衝池
+        // 可存入蓄水池
         const toPool = net - expense;
         const toPoolEl = document.getElementById('toPoolAmount');
 
@@ -301,7 +301,7 @@
             targetDescription.innerHTML = `
                 <p class="mb-1">
                     <span class="text-red-500 font-bold">基礎版（3M） - NT$ ${lv1.toLocaleString()}：</span>
-                    工作轉換 / 突發狀況緩衝。
+                    工作轉換 / 突發狀況蓄水。
                 </p>
 
                 <p class="mb-1">
@@ -328,7 +328,7 @@
             } else {
                 badge.innerText = 'RELAX';
                 badge.className = 'mt-2 inline-block px-3 py-0.5 rounded-full text-[10px] font-black bg-blue-100 text-blue-600';
-                guide.innerHTML = '☁️ 緩衝池健康。錢開始幫你換生活的鬆弛感。';
+                guide.innerHTML = '☁️ 蓄水池健康。錢開始幫你換生活的鬆弛感。';
             }
 
         }
@@ -362,7 +362,7 @@
             if (months < 3) {
                 badge.innerText = 'WARNING';
                 badge.className = 'mt-2 inline-block px-3 py-0.5 rounded-full text-[10px] font-black bg-red-100 text-red-600';
-                guide.innerHTML = '🚨 水位不足，自由工作者建議優先建立緩衝池。';
+                guide.innerHTML = '🚨 水位不足，自由工作者建議優先建立蓄水池。';
 
             } else if (months < 12) {
                 badge.innerText = 'STABLE';
