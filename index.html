@@ -1,6 +1,3 @@
-# Bear.saving | 自由職業者 / 固定收入蓄水池系統 v3.0
-
-```html
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -244,8 +241,7 @@
         fixedBtn.classList.add('mode-active');
         variableBtn.classList.remove('mode-active');
         toggleIncomeFields();
-        toggleIncomeFields();
-    calculate();
+        calculate();
     });
 
     variableBtn.addEventListener('click', () => {
@@ -265,8 +261,12 @@
         const pool = parseFloat(document.getElementById('currentPool').value) || 0;
 
         // 淨收入
-        const tax = Math.round((gross - cost) * taxRate);
-        const net = Math.max(0, gross - cost - tax);
+        // 固定收入：不套用經營成本與預留稅率，直接以本月進帳金額計算。
+        // 不固定收入：才扣除經營成本與預留稅率。
+        const tax = incomeMode === 'variable' ? Math.round(Math.max(0, gross - cost) * taxRate) : 0;
+        const net = incomeMode === 'fixed'
+            ? Math.max(0, gross)
+            : Math.max(0, gross - cost - tax);
 
         document.getElementById('netResult').innerText = `NT$ ${net.toLocaleString()}`;
 
@@ -383,4 +383,3 @@
 
 </body>
 </html>
-```
